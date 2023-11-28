@@ -122,6 +122,7 @@ add_filter('the_content', 'renym_words_replace');
 
 /**
  * Reemplazar palabras cogiendolas de la base de datos
+ *
 */
 function renym_words_replace_db($text){
     global $wpdb;
