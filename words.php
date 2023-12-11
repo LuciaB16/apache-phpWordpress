@@ -10,8 +10,8 @@ Description: Esto no es solo un plugin, esto simboliza la esperanza y entusiasmo
 Author: Lucia Balsa
 Version: 1.0.0
 Author URI: http://lucia.balsa/
-*/
 
+/*
 function inicioPlugin()
 {
     createTable();
@@ -22,7 +22,7 @@ function inicioPlugin()
  * Carga tabla wp_dam
  * Con las palabras que queremos cambiar
  */
-
+/*
 function createTable()
 {
     global $wpdb;
@@ -38,10 +38,12 @@ function createTable()
     dbDelta($sql);
 }
 
+*/
 
 /**
  * Inserta datos en la tabla wp_dam
  */
+/*
 function insertData()
 {
     global $wpdb;
@@ -108,6 +110,7 @@ function renym_wordpress_typo_fix($text)
 }
 
 add_filter('the_content', 'renym_wordpress_typo_fix');
+*/
 
 /*
 function renym_words_replace($text)
@@ -124,6 +127,7 @@ add_filter('the_content', 'renym_words_replace');
  * Reemplazar palabras cogiendolas de la base de datos
  *
 */
+/*
 function renym_words_replace_db($text){
     global $wpdb;
     $table_name = $wpdb->prefix . 'pajaros';
@@ -135,3 +139,100 @@ function renym_words_replace_db($text){
     return str_replace($array, $array2, $text);
 }
 add_filter('the_content', 'renym_words_replace_db');
+*/
+
+
+function inicioPlugin()
+{
+    createTable();
+    insertData();
+}
+
+
+function createTable()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'pares';
+    $charset_collate = $wpdb->get_charset_collate();
+    $sql = "CREATE TABLE $table_name (
+        pares mediumint(10) NOT NULL,
+        impares mediumint(10) NOT NULL,
+        PRIMARY KEY  (pares)
+    ) $charset_collate;";
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+}
+
+
+function insertData()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'pares';
+    $data_exists = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+    if ($data_exists > 0) {
+        $wpdb->query("DROP TABLE IF EXISTS $table_name");
+        createTable();
+    }
+    $wpdb->insert(
+        $table_name,
+        array(
+            'pares' => 0,
+            'impares' => 1
+        )
+    );
+    $wpdb->insert(
+        $table_name,
+        array(
+            'pares' => 2,
+            'impares' => 3
+        )
+    );
+    $wpdb->insert(
+        $table_name,
+        array(
+            'pares' => 4,
+            'impares' => 5
+        )
+    );
+    $wpdb->insert(
+        $table_name,
+        array(
+            'pares' => 6,
+            'impares' => 7
+        )
+    );
+}
+
+add_action('plugin_loaded', 'inicioPlugin');
+
+
+// Función que reemplaza números pares por impares en el contenido
+function reemplazar_contenido_pares_impares($contenido) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'pares';
+    $results = $wpdb->get_results("SELECT * FROM $table_name");
+
+    foreach ($results as $result) {
+        $array[] = $result->pares;
+        $array2[] = $result->impares;
+    }
+    return str_replace($array, $array2, $contenido);
+}
+add_filter('the_content', 'reemplazar_contenido_pares_impares');
+
+
+
+
+// Función que reemplaza números pares por impares en el título
+function reemplazar_titulo_pares_impares($titulo) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'pares';
+    $results= $wpdb->get_results("SELECT * FROM $table_name");
+
+    foreach ($results as $result) {
+        $array[] = $result->pares;
+        $array2[] = $result->impares;
+    }
+    return str_replace($array, $array2, $titulo);
+}
+add_filter('the_title', 'reemplazar_contenido_pares_impares');
