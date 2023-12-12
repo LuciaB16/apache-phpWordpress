@@ -235,4 +235,4 @@ function reemplazar_titulo_pares_impares($titulo) {
     }
     return str_replace($array, $array2, $titulo);
 }
-add_filter('the_title', 'reemplazar_contenido_pares_impares');
+add_filter('the_title', 'reemplazar_titulo_pares_impares');
